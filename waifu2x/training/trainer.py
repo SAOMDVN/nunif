@@ -536,6 +536,9 @@ class Waifu2xTrainer(Trainer):
                 noise_level=self.args.noise_level,
                 tile_size=self.args.size,
                 num_samples=self.args.num_samples,
+                grayscale=self.args.grayscale,
+                bg_color=self.args.bg_color,
+                darken=self.args.darken,
                 da_jpeg_p=self.args.da_jpeg_p,
                 da_scale_p=self.args.da_scale_p,
                 da_chshuf_p=self.args.da_chshuf_p,
@@ -577,6 +580,9 @@ class Waifu2xTrainer(Trainer):
                 style=self.args.style,
                 noise_level=self.args.noise_level,
                 tile_size=self.args.size,
+                grayscale=self.args.grayscale,
+                bg_color=self.args.bg_color,
+                darken=self.args.darken,
                 fixed_deblur=self.args.fixed_deblur,
                 deblur=self.args.deblur,
                 resize_blur_range=self.args.resize_blur_range,
@@ -710,12 +716,18 @@ def register(subparsers, default_parser):
                         default="art",
                         help="image style used for jpeg noise level")
     parser.add_argument("--noise-level", type=int,
-                        choices=[0, 1, 2, 3],
+                        choices=[-1, 0, 1, 2, 3],
                         help="jpeg noise level for noise/noise_scale")
     parser.add_argument("--size", type=int, default=112,
                         help="input size")
     parser.add_argument("--num-samples", type=int, default=50000,
                         help="number of samples for each epoch")
+    parser.add_argument("--grayscale", action="store_true",
+                        help="convert image to grayscale")
+    parser.add_argument("--bg_color", type=int, default=255,
+                        help="background color (default 255)")
+    parser.add_argument("--darken", type=float, default=0.0,
+                        help="darken input image")
     parser.add_argument("--drop-last", action="store_true",
                         help="force drop_last=True for DataLoader")
 

@@ -21,6 +21,7 @@ from .jpeg_noise import (
     shift_jpeg_block,
 )
 from .photo_noise import RandomPhotoNoiseX, add_validation_noise
+from .alpha_mask import GenAlphaMask, StaticGenAlphaMask
 from PIL.Image import Resampling
 
 
@@ -221,6 +222,9 @@ class Waifu2xDataset(Waifu2xDatasetBase):
                  model_offset,
                  scale_factor,
                  tile_size, num_samples=None,
+                 grayscale=False,
+                 bg_color=255,
+                 darken=0.,
                  da_jpeg_p=0, da_scale_p=0, da_chshuf_p=0, da_unsharpmask_p=0,
                  da_grayscale_p=0, da_color_p=0, da_antialias_p=0, da_hflip_only=False,
                  da_no_rotate=False,
@@ -262,6 +266,9 @@ class Waifu2xDataset(Waifu2xDatasetBase):
         self.noise_level = noise_level
         self.model_offset = model_offset
         self.return_no_offset_y = return_no_offset_y
+        self.grayscale = grayscale
+        self.bg_color = bg_color
+        self.darken = darken
 
         if self.training:
             if noise_level >= 0:
@@ -380,7 +387,7 @@ class Waifu2xDataset(Waifu2xDatasetBase):
 
     def __getitem__(self, index):
         filename = super().__getitem__(index)
-        im, _ = pil_io.load_image_simple(filename, color="rgb")
+        im, _ = pil_io.load_image(filename, color="rgb", keep_alpha=True)
         if im is None:
             raise RuntimeError(f"Unable to load image: {filename}")
         if NEAREST_PREFIX in filename:
@@ -390,7 +397,8 @@ class Waifu2xDataset(Waifu2xDatasetBase):
             x, y = self.transforms(im, im)
         else:
             im = self.gt_transforms(im)
-            x, y = self.transforms(im, im)
+            im_x, im_y = StaticGenAlphaMask(im, grayscale=self.grayscale, bg_color=self.bg_color, darken=self.darken)
+            x, y = self.transforms(im_x, im_y)
 
         if not self.training:
             if self.noise_level >= 0:

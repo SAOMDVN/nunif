@@ -173,7 +173,7 @@ class Waifu2x():
 
     def load_model(self, method, noise_level):
         assert (method in ("scale", "noise_scale", "noise", "scale4x", "noise_scale4x"))
-        assert (method in {"scale", "scale4x"} or 0 <= noise_level and noise_level < 4)
+        assert (method in {"scale", "scale4x"} or -1 <= noise_level and noise_level < 4)
 
         if method in {"scale", "scale4x", "noise"}:
             self._load_model(method, noise_level)
@@ -213,7 +213,7 @@ class Waifu2x():
 
     def render(self, x, method, noise_level, tile_size=None, batch_size=None, enable_amp=False):
         assert (method in ("scale", "noise_scale", "noise", "scale4x", "noise_scale4x"))
-        assert (method in {"scale", "scale4x"} or 0 <= noise_level and noise_level < 4)
+        assert (method in {"scale", "scale4x"} or -1 <= noise_level and noise_level < 4)
         if method == "scale":
             z = tiled_render(x, self.scale_model,
                              tile_size=tile_size, batch_size=batch_size,
@@ -255,7 +255,7 @@ class Waifu2x():
         assert (x.shape[0] == 3)
         assert (alpha is None or alpha.shape[0] == 1 and alpha.shape[1:] == x.shape[1:])
         assert (method in ("scale", "scale4x", "noise_scale", "noise_scale4x", "noise"))
-        assert (method in {"scale", "scale4x"} or 0 <= noise_level and noise_level < 4)
+        assert (method in {"scale", "scale4x"} or -1 <= noise_level and noise_level < 4)
 
         if alpha is not None:
             # check all 1 alpha channel
