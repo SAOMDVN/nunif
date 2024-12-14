@@ -7,7 +7,7 @@ import random
 import torchvision.transforms.functional as TF
 from torch.utils.data.dataset import Dataset
 from torch.utils.data import DataLoader
-from nunif.utils.pil_io import load_image_simple
+from nunif.utils.pil_io import load_image
 from nunif.utils.image_loader import list_images
 from nunif.transforms.std import pad
 
@@ -54,7 +54,7 @@ class CreateTrainingData(Dataset):
     def __getitem__(self, i):
         filename = self.files[i]
         bg_color = random.randint(0, 255)
-        im, _ = load_image_simple(filename, color="rgb", bg_color=bg_color)
+        im, _ = load_image(filename, color="rgb", keep_alpha=True)
         if im is None:
             return -1
         if self.args.pad:
