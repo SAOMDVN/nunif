@@ -536,6 +536,7 @@ class Waifu2xTrainer(Trainer):
                 noise_level=self.args.noise_level,
                 tile_size=self.args.size,
                 num_samples=self.args.num_samples,
+                use_color=self.args.use_color,
                 grayscale=self.args.grayscale,
                 bg_color=self.args.bg_color,
                 darken=self.args.darken,
@@ -580,6 +581,7 @@ class Waifu2xTrainer(Trainer):
                 style=self.args.style,
                 noise_level=self.args.noise_level,
                 tile_size=self.args.size,
+                use_color=self.args.use_color,
                 grayscale=self.args.grayscale,
                 bg_color=self.args.bg_color,
                 darken=self.args.darken,
@@ -722,6 +724,8 @@ def register(subparsers, default_parser):
                         help="input size")
     parser.add_argument("--num-samples", type=int, default=50000,
                         help="number of samples for each epoch")
+    parser.add_argument("--use-color", action="store_true",
+                        help="train on color bleed instead of alpha")
     parser.add_argument("--grayscale", action="store_true",
                         help="convert image to grayscale")
     parser.add_argument("--bg-color", type=lambda s: tuple(map(int, s.split(','))), default=(255, 255, 255),

@@ -5,7 +5,7 @@ from torchvision.transforms import functional as TF
 import torch
 from os import path
 
-def StaticGenAlphaMask(image, grayscale=False, bg_color=(255, 255, 255), darken=0.):
+def GenAlphaMask(image, grayscale, bg_color, darken):
     background_color = bg_color
 
     source = image
@@ -24,26 +24,29 @@ def StaticGenAlphaMask(image, grayscale=False, bg_color=(255, 255, 255), darken=
 
     return color.convert("RGB"), mask.convert("RGB")
 
-class GenAlphaMask():
-    def __init__(self, grayscale=False, bg_color=(255, 255, 255), darken=0.):
-        self.grayscale = grayscale
-        self.background_color = bg_color
-        self.darken = darken
+def GenColorMask(image, grayscale, bg_color, darken):
+    background_color = bg_color
 
-    def __call__(self, x, y):
-        source = x
-        alpha = source.getchannel("A")
+    source = image
+    alpha = source.getchannel("A")
 
-        if self.darken:
-            enhancer = ImageEnhance.Brightness(source)
-            source = enhancer.enhance(float(self.darken))
+    if darken:
+        enhancer = ImageEnhance.Brightness(source)
+        source = enhancer.enhance(float(darken))
 
-        mask = alpha.convert("L")
-        background = Image.new("RGB", source.size, self.background_color)
-        color = Image.composite(source, background, alpha)
+    flat = alpha.point(lambda p: 255 if p > 0 else 0)
+    background = Image.new("RGB", source.size, background_color)
+    color = Image.composite(source, background, alpha)
+    mask = Image.composite(source, background, flat)
 
-        if self.grayscale:
-            color = color.convert("L")
+    if grayscale:
+        color = color.convert("L")
+        mask = mask.convert("L")
 
-        return color.convert("RGB"), mask.convert("RGB")
+    return color.convert("RGB"), mask.convert("RGB")
 
+def GenMask(image, use_color=False, grayscale=False, bg_color=(255,255,255), darken=0.):
+    if use_color:
+        return GenColorMask(image, grayscale, bg_color, darken)
+    else:
+        return GenAlphaMask(image, grayscale, bg_color, darken)
