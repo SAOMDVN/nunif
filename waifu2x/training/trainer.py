@@ -724,8 +724,8 @@ def register(subparsers, default_parser):
                         help="number of samples for each epoch")
     parser.add_argument("--grayscale", action="store_true",
                         help="convert image to grayscale")
-    parser.add_argument("--bg_color", type=int, default=255,
-                        help="background color (default 255)")
+    parser.add_argument("--bg-color", type=lambda s: tuple(map(int, s.split(','))), default=(255, 255, 255),
+                        help="background color as r,g,b (default: 255,255,255)")
     parser.add_argument("--darken", type=float, default=0.0,
                         help="darken input image")
     parser.add_argument("--drop-last", action="store_true",

@@ -5,15 +5,15 @@ from torchvision.transforms import functional as TF
 import torch
 from os import path
 
-def StaticGenAlphaMask(image, grayscale=False, bg_color=255, darken=0.):
-    background_color = (bg_color, bg_color, bg_color)
+def StaticGenAlphaMask(image, grayscale=False, bg_color=(255, 255, 255), darken=0.):
+    background_color = bg_color
 
     source = image
     alpha = source.getchannel("A")
 
     if darken:
         enhancer = ImageEnhance.Brightness(source)
-        source = enhancer.enhance(float(self.darken))
+        source = enhancer.enhance(float(darken))
 
     mask = alpha.convert("L")
     background = Image.new("RGB", source.size, background_color)
@@ -25,9 +25,9 @@ def StaticGenAlphaMask(image, grayscale=False, bg_color=255, darken=0.):
     return color.convert("RGB"), mask.convert("RGB")
 
 class GenAlphaMask():
-    def __init__(self, grayscale=False, bg_color=255, darken=0.):
+    def __init__(self, grayscale=False, bg_color=(255, 255, 255), darken=0.):
         self.grayscale = grayscale
-        self.background_color = (bg_color, bg_color, bg_color)
+        self.background_color = bg_color
         self.darken = darken
 
     def __call__(self, x, y):

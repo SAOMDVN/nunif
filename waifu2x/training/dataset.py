@@ -223,7 +223,7 @@ class Waifu2xDataset(Waifu2xDatasetBase):
                  scale_factor,
                  tile_size, num_samples=None,
                  grayscale=False,
-                 bg_color=255,
+                 bg_color=(255,255,255),
                  darken=0.,
                  da_jpeg_p=0, da_scale_p=0, da_chshuf_p=0, da_unsharpmask_p=0,
                  da_grayscale_p=0, da_color_p=0, da_antialias_p=0, da_hflip_only=False,
