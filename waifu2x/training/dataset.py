@@ -267,6 +267,7 @@ class Waifu2xDataset(Waifu2xDatasetBase):
         self.noise_level = noise_level
         self.model_offset = model_offset
         self.return_no_offset_y = return_no_offset_y
+        self.use_color = use_color
         self.grayscale = grayscale
         self.bg_color = bg_color
         self.darken = darken
