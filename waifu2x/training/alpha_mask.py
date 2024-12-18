@@ -1,49 +1,39 @@
-import random
-from io import BytesIO
 from PIL import Image, ImageEnhance
-from torchvision.transforms import functional as TF
-import torch
-from os import path
 
 def GenAlphaMask(image, grayscale, bg_color, darken):
-    background_color = bg_color
+    alpha = image.getchannel("A")
+    
+    if darken > 0:
+        enhancer = ImageEnhance.Brightness(image)
+        image = enhancer.enhance(float(darken))
 
-    source = image
-    alpha = source.getchannel("A")
-
-    if darken:
-        enhancer = ImageEnhance.Brightness(source)
-        source = enhancer.enhance(float(darken))
-
-    mask = alpha.convert("L")
-    background = Image.new("RGB", source.size, background_color)
-    color = Image.composite(source, background, alpha)
+    background = Image.new("RGB", image.size, bg_color)
+    color = Image.composite(image.convert("RGB"), background, alpha)
 
     if grayscale:
-        color = color.convert("L")
+        color = color.convert("L").convert("RGB")
 
-    return color.convert("RGB"), mask.convert("RGB")
+    return color, alpha.convert("RGB")
+
 
 def GenColorMask(image, grayscale, bg_color, darken):
-    background_color = bg_color
+    alpha = image.getchannel("A")
+    
+    if darken > 0:
+        enhancer = ImageEnhance.Brightness(image)
+        image = enhancer.enhance(float(darken))
 
-    source = image
-    alpha = source.getchannel("A")
+    flat_alpha = alpha.point(lambda p: 255 if p > 0 else 0)
 
-    if darken:
-        enhancer = ImageEnhance.Brightness(source)
-        source = enhancer.enhance(float(darken))
-
-    flat = alpha.point(lambda p: 255 if p > 0 else 0)
-    background = Image.new("RGB", source.size, background_color)
-    color = Image.composite(source, background, alpha)
-    mask = Image.composite(source, background, flat)
+    background = Image.new("RGB", image.size, bg_color)
+    color = Image.composite(image.convert("RGB"), background, alpha)
+    mask = Image.composite(image.convert("RGB"), background, flat_alpha)
 
     if grayscale:
-        color = color.convert("L")
-        mask = mask.convert("L")
+        color = color.convert("L").convert("RGB")
+        mask = mask.convert("L").convert("RGB")
 
-    return color.convert("RGB"), mask.convert("RGB")
+    return color, mask
 
 def GenMask(image, use_color, grayscale=False, bg_color=(255,255,255), darken=0.):
     if use_color:
