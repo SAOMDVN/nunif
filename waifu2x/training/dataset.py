@@ -398,7 +398,7 @@ class Waifu2xDataset(Waifu2xDatasetBase):
             x, y = self.transforms(im, im)
         else:
             im = self.gt_transforms(im)
-            im_x, im_y = GenMask(im, grayscale=self.grayscale, bg_color=self.bg_color, darken=self.darken)
+            im_x, im_y = GenMask(im, use_color=self.use_color, grayscale=self.grayscale, bg_color=self.bg_color, darken=self.darken)
             x, y = self.transforms(im_x, im_y)
 
         if not self.training:

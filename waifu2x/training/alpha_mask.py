@@ -45,7 +45,7 @@ def GenColorMask(image, grayscale, bg_color, darken):
 
     return color.convert("RGB"), mask.convert("RGB")
 
-def GenMask(image, use_color=False, grayscale=False, bg_color=(255,255,255), darken=0.):
+def GenMask(image, use_color, grayscale=False, bg_color=(255,255,255), darken=0.):
     if use_color:
         return GenColorMask(image, grayscale, bg_color, darken)
     else:
